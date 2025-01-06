@@ -29,10 +29,11 @@ function renderGuessAsRow(guess: String, props: WordHolderProps) : React.ReactEl
         if (wordLeft[i] == movedOverPlaceholder) {
             continue
         }
-        for(let j = 0; j < wordLeft.length; j++) {
+        for(let j = 0; j < guess.length; j++) {
             if (guess[i] == wordLeft[j]) {
-                wordLeft[j] = movedOverPlaceholder
+                wordLeft[i] = movedOverPlaceholder
                 coloring[i] = Correctness.WrongPosition
+                break
             }
         }
     }
@@ -44,7 +45,7 @@ function renderGuessAsRow(guess: String, props: WordHolderProps) : React.ReactEl
 }
 
 // Only the current input!
-function renderInputAsRow(guess: String) : React.ReactElement {
+function renderInputAsRow(guess: string) : React.ReactElement {
     let letters = Array.from(guess.padEnd(WordLength, " ")).map(l => <td>{l}</td>)
     return (
         <tr style={{height: '27px', maxHeight: '27px'}}>{letters}</tr>

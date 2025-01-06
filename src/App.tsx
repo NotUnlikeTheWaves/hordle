@@ -49,7 +49,7 @@ const [gameState, setGameState] = useState<GameState>({currentWord: "", history:
   return (
     <>
       <div>
-        <WordHolder word="ASSES" gameState={gameState} />
+        <WordHolder word="LIBEL" gameState={gameState} />
       </div>
     </>
   )
