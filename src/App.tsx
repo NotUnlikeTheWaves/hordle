@@ -8,35 +8,34 @@ import { WordLength } from './Constants'
 
 
 function App() {
-const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["zesty", "lemon"]})
+const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["ZESTY", "LEMON"]})
   
-function handleUserInput(event: KeyboardEvent) {
-  console.log("handle input")
-  console.log(event)
-  function isLetter(s: string) : boolean {
-    return s.length == 1 && (s.toLowerCase() != s.toUpperCase())
-  }
-  let key = event.key.toUpperCase()
-  switch(key) {
-    case "ENTER": {
-      // handle submit
-      break;
+  function handleUserInput(event: KeyboardEvent) {
+    console.log("handle input")
+    console.log(event)
+    function isLetter(s: string) : boolean {
+      return s.length == 1 && (s.toLowerCase() != s.toUpperCase())
     }
-    case "BACKSPACE": {
-      let newCurrentWord = gameState.currentWord.slice(0, -1)
-      setGameState({...gameState, currentWord: newCurrentWord})
-      break;
-    }
-    default: {
-      if(isLetter(key) && gameState.currentWord.length < WordLength) {
-        let newCurrentWord = gameState.currentWord + key;
-        setGameState({...gameState, currentWord: newCurrentWord})
+    let key = event.key.toUpperCase()
+    switch(key) {
+      case "ENTER": {
+        // handle submit
+        break;
       }
-      break;
+      case "BACKSPACE": {
+        let newCurrentWord = gameState.currentWord.slice(0, -1)
+        setGameState({...gameState, currentWord: newCurrentWord})
+        break;
+      }
+      default: {
+        if(isLetter(key) && gameState.currentWord.length < WordLength) {
+          let newCurrentWord = gameState.currentWord + key;
+          setGameState({...gameState, currentWord: newCurrentWord})
+        }
+        break;
+      }
     }
   }
-
-}
 
   useEffect(() => {
     document.addEventListener('keydown', handleUserInput)
@@ -46,8 +45,7 @@ function handleUserInput(event: KeyboardEvent) {
   return (
     <>
       <div>
-        Pengis
-        <WordHolder word="Yolo" gameState={gameState} />
+        <WordHolder word="YOLOW" gameState={gameState} />
       </div>
     </>
   )
