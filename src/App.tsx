@@ -15,6 +15,12 @@ function showGameWon(gameState: GameState) : React.ReactElement {
   )
 }
 
+function showGameLost(gameState: GameState, gamesWon: number)  : React.ReactElement {
+  return (
+    <h1>You lose! You completed {gamesWon} wordles in {MaxGuesses} attempts.</h1>
+  )
+}
+
 function App() {
   const [gameState, setGameState] = useState<GameState>({currentWord: "", history: []})
   
@@ -55,21 +61,22 @@ function App() {
   }, [gameState.currentWord]) // magic
 
   let wordles = []
-  var numberOfCompleteGames = 0
+  var numberOfCompleteWordles = 0
   for(let i = 0; i < activeWords.length; i++) {
     wordles.push(<WordHolder key={i} word={activeWords[i]} gameState={gameState} />)
     if (gameState.history.indexOf(activeWords[i]) != -1) {
-      numberOfCompleteGames++
+      numberOfCompleteWordles++
     }
   }
 
-  let gameWon = numberOfCompleteGames == activeWords.length
-  let gameLost = gameState.history.length == MaxGuesses
+  let gameWon = numberOfCompleteWordles == activeWords.length
+  let gameLost = (gameState.history.length == MaxGuesses) && !gameWon
 
   return (
     <>
       <div>
       {gameWon && showGameWon(gameState)}
+      {gameLost && showGameLost(gameState, numberOfCompleteWordles)}
       {wordles}
       </div>
     </>

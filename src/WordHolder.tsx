@@ -57,7 +57,8 @@ function renderInputAsRow(guess: string) : React.ReactElement {
     )
 }
 
-function renderUnaccessedRows(count: Number) : React.ReactElement {
+function renderUnaccessedRows(count: number) : React.ReactElement {
+    if(count < 0) return <></>
     let results = [...Array(count).keys()].map(i =>
         <tr key={i}>{[...Array(WordLength).keys()].map(j => <td key={j}></td>)}</tr>
     )
