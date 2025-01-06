@@ -2,7 +2,7 @@
 import { MaxGuesses, WordLength } from './Constants';
 import { GameState } from './Types';
 type WordHolderProps = {
-    word: String;
+    word: string;
     gameState: GameState
 }
 
@@ -59,13 +59,22 @@ function renderUnaccessedRows(count: Number) : React.ReactElement {
     return <>{results}</>
 }
 
-function WordHolder(props: WordHolderProps) {
+function renderSolved(props: WordHolderProps, solvedIndex: number): React.ReactElement {
+    let previousWords = props.gameState.history.slice(0, solvedIndex+1).map(h => renderGuessAsRow(h, props))
+    return (
+        <>
+        <table>
+            {previousWords}
+        </table>
+        </>
+    )
+}
+
+function renderUnsolved(props: WordHolderProps) : React.ReactElement {
     let previousWords = props.gameState.history.map(h => renderGuessAsRow(h, props))
     let current = renderInputAsRow(props.gameState.currentWord)
     let unaccessedRowCount = MaxGuesses - (previousWords.length + 1)
     let unaccessedRows = renderUnaccessedRows(unaccessedRowCount)
-    console.log(unaccessedRows)
-    console.log("A")
     return (
         <>
         <table>
@@ -75,6 +84,15 @@ function WordHolder(props: WordHolderProps) {
         </table>
         </>
     )
+}
+
+function WordHolder(props: WordHolderProps) {
+    let solvedIndex = props.gameState.history.indexOf(props.word);
+    if (solvedIndex == -1) {
+        return renderUnsolved(props)
+    } else {
+        return renderSolved(props, solvedIndex)
+    }
 }
 
 export {WordHolder}
