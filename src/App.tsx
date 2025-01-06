@@ -41,6 +41,18 @@ function getNextFormat(format: GameFormat) : GameFormat {
   }
 }
 
+function showLettersUsed(gameState: GameState) : React.ReactElement {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
+  let result = alphabet.map(l => {
+      if (gameState.history.some(h => h.indexOf(l) != -1)) {
+        return <div key={l} className='letters-used-element' style={{backgroundColor: "rgb(198, 134, 206)"}}>{l}</div>
+      }
+      else return <div key={l} className='letters-used-element'>{l}</div>
+    }
+  )
+  return <><div className='letters-used-container'>{result}</div></>
+}
+
 function App() {
   const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["SPEAK"]})
   const [format, setFormat] = useState<GameFormat>(GameFormat.Tall);
@@ -96,11 +108,18 @@ function App() {
   return (
     <>
       <div>
-        <button onClick={() => setFormat(getNextFormat(format))}>Change format</button>
-      {gameWon && showGameWon(gameState)}
-      {gameLost && showGameLost(gameState, numberOfCompleteWordles)}
-      <div className="grid-container-element" style={{gridTemplateColumns: format}}>{wordles}
+        <div className="top">
+          <button onClick={() => setFormat(getNextFormat(format))}>Change format</button>
+          A game of 64ordle (and not enough whitespace)
+        </div>
+        {gameWon && showGameWon(gameState)}
+        {gameLost && showGameLost(gameState, numberOfCompleteWordles)}
+        <div className="grid-container-element" style={{gridTemplateColumns: format}}>
+          {wordles}
+        </div>
       </div>
+      <div className="footer">
+        {showLettersUsed(gameState)}
       </div>
     </>
   )

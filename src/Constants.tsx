@@ -1,5 +1,5 @@
-const MaxGuesses = 70;
-const NumberOfWordles = 64;
+const MaxGuesses = 20;
+const NumberOfWordles = 8;
 const WordLength = 5;
 
 export {MaxGuesses, NumberOfWordles, WordLength};

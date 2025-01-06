@@ -23,3 +23,37 @@ td {
 .grid-child-element { 
   margin-bottom: 20px; 
 }
+
+.letters-used-container {
+  display: grid;
+  width: 20%;
+  grid-gap: 3px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  margin:auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.letters-used-element {
+  background-color: rgb(147, 147, 147);
+  /* max-width: 10px; */
+}
+
+.top {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background-color: rgb(71, 71, 71);
+  text-align: center;
+  padding: 5px;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgb(71, 71, 71);
+  text-align: center;
+}
