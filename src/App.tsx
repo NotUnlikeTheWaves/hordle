@@ -83,6 +83,7 @@ function handleKeyInput(key: string, gameState: GameState, setGameState: React.D
       setGameState({...gameState, currentWord: newCurrentWord})
       break;
     }
+    case "DELETE":
     case "CLEAR": {
       setGameState({...gameState, currentWord: ""})
       break;
@@ -99,7 +100,7 @@ function handleKeyInput(key: string, gameState: GameState, setGameState: React.D
 
 
 function App() {
-  const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["SPEAK"]})
+  const [gameState, setGameState] = useState<GameState>({currentWord: "", history: []})
   const [format, setFormat] = useState<GameFormat>(GameFormat.Tall);
 
   function handleKeyboardInput(event: KeyboardEvent) {
