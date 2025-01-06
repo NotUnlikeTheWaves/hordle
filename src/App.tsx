@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { WordHolder } from './WordHolder'
 import { GameState } from './Types'
-import { WordLength } from './Constants'
+import { WordLength, NumberOfWordles } from './Constants'
 import { WordList } from './WordList'
+import { getWordList } from './Random'
 
-
+const wordList = getWordList()
 
 function App() {
-const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["ZESTY", "LEMON"]})
+  const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["ZESTY", "LEMON"]})
   
   function handleUserInput(event: KeyboardEvent) {
     console.log("handle input")
@@ -41,6 +42,8 @@ const [gameState, setGameState] = useState<GameState>({currentWord: "", history:
     }
   }
 
+  console.log(wordList)
+
   useEffect(() => {
     document.addEventListener('keydown', handleUserInput)
     return () => document.removeEventListener('keydown', handleUserInput)
@@ -49,7 +52,8 @@ const [gameState, setGameState] = useState<GameState>({currentWord: "", history:
   return (
     <>
       <div>
-        <WordHolder word="LIBEL" gameState={gameState} />
+      <WordHolder word="LIBEL" gameState={gameState} />
+      <WordHolder word="HELLO" gameState={gameState} />
       </div>
     </>
   )
