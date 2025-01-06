@@ -3,7 +3,7 @@ import './App.css'
 import { WordHolder } from './WordHolder'
 import { GameState } from './Types'
 import { WordLength } from './Constants'
-
+import { WordList } from './WordList'
 
 
 
@@ -19,7 +19,11 @@ const [gameState, setGameState] = useState<GameState>({currentWord: "", history:
     let key = event.key.toUpperCase()
     switch(key) {
       case "ENTER": {
-        // handle submit
+        console.log("enter")
+        if (WordList.indexOf(gameState.currentWord.toLowerCase()) != -1) {
+          console.log("exists")
+          setGameState({...gameState, currentWord: "", history: gameState.history.concat(gameState.currentWord)})
+        }
         break;
       }
       case "BACKSPACE": {
@@ -45,7 +49,7 @@ const [gameState, setGameState] = useState<GameState>({currentWord: "", history:
   return (
     <>
       <div>
-        <WordHolder word="YOLOW" gameState={gameState} />
+        <WordHolder word="ASSES" gameState={gameState} />
       </div>
     </>
   )

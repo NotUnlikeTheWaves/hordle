@@ -1,6 +1,6 @@
 type GameState = {
-    currentWord: String
-    history: Array<String>
+    currentWord: string
+    history: Array<string>
 }
 
 export type {GameState}
