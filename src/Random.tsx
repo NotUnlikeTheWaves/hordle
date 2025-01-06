@@ -34,11 +34,11 @@ function splitmix32(a: number) : (() => number) {
      }
    }
 
-// https://stackoverflow.com/a/72772305
-// Someone should really make a standard library for this language q.q
-const rand = splitmix32(cyrb128(new Date().toISOString().split('T')[0])[0])
 
 function getWordList() : Array<string> {
+    // https://stackoverflow.com/a/72772305
+    // Someone should really make a standard library for this language q.q
+    const rand = splitmix32(cyrb128(new Date().toISOString().split('T')[0])[0])
     let arr = []
     for(let i = 0; i < NumberOfWordles; i++) {
         var number = Math.floor(rand() * WordList.length);
