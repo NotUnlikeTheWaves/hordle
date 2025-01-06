@@ -39,13 +39,13 @@ function splitmix32(a: number) : (() => number) {
 const rand = splitmix32(cyrb128(new Date().toISOString().split('T')[0])[0])
 
 function getWordList() : Array<string> {
-    var arr = []
+    let arr = []
     for(let i = 0; i < NumberOfWordles; i++) {
         var number = Math.floor(rand() * WordList.length);
         while (arr.indexOf(WordList[number]) != -1) {
             number = Math.floor(rand() * WordList.length);
         }
-        arr.push(WordList[number])
+        arr.push(WordList[number].toUpperCase())
     }
     return arr
 }
