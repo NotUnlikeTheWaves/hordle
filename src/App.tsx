@@ -6,8 +6,8 @@ import { WordLength, NumberOfWordles, MaxGuesses } from './Constants'
 import { WordList } from './WordList'
 import { getWordList } from './Random'
 
-// const wordList = getWordList()
-const activeWords = ["LIBEL", "HELLO", "THERE"]
+const activeWords = getWordList()
+// const activeWords = ["LIBEL", "HELLO", "THERE"]
 
 function showGameWon(gameState: GameState) : React.ReactElement {
   return (
@@ -22,7 +22,7 @@ function showGameLost(gameState: GameState, gamesWon: number)  : React.ReactElem
 }
 
 function App() {
-  const [gameState, setGameState] = useState<GameState>({currentWord: "", history: []})
+  const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["SPEAK"]})
   
   function handleUserInput(event: KeyboardEvent) {
     function isLetter(s: string) : boolean {
@@ -63,7 +63,7 @@ function App() {
   let wordles = []
   var numberOfCompleteWordles = 0
   for(let i = 0; i < activeWords.length; i++) {
-    wordles.push(<WordHolder key={i} word={activeWords[i]} gameState={gameState} />)
+    wordles.push(<div className="grid-child-element purple"><WordHolder key={i} word={activeWords[i]} gameState={gameState} /></div>)
     if (gameState.history.indexOf(activeWords[i]) != -1) {
       numberOfCompleteWordles++
     }
@@ -77,7 +77,8 @@ function App() {
       <div>
       {gameWon && showGameWon(gameState)}
       {gameLost && showGameLost(gameState, numberOfCompleteWordles)}
-      {wordles}
+      <div className="grid-container-element">{wordles}
+      </div>
       </div>
     </>
   )

@@ -1,5 +1,4 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -15,4 +14,13 @@ td {
   width:20px;
   max-width: 20px;
   background-color: black;
+}
+
+.grid-container-element { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+  grid-gap: 5px; 
+} 
+.grid-child-element { 
+  margin-bottom: 20px; 
 }
