@@ -6,6 +6,11 @@ import { WordLength, NumberOfWordles, MaxGuesses } from './Constants'
 import { WordList } from './WordList'
 import { getWordList } from './Random'
 
+interface LooseObject {
+  [key: string]: any
+}
+
+
 const activeWords = getWordList()
 // const activeWords = ["LIBEL", "HELLO", "THERE"]
 
@@ -15,7 +20,7 @@ function showGameWon(gameState: GameState) : React.ReactElement {
   )
 }
 
-function showGameLost(gameState: GameState, gamesWon: number)  : React.ReactElement {
+function showGameLost(gamesWon: number)  : React.ReactElement {
   return (
     <h1>You lose! You completed {gamesWon} wordles in {MaxGuesses} attempts.</h1>
   )
@@ -41,56 +46,72 @@ function getNextFormat(format: GameFormat) : GameFormat {
   }
 }
 
-function showLettersUsed(gameState: GameState) : React.ReactElement {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
+function showLettersUsed(gameState: GameState, setGameState: React.Dispatch<React.SetStateAction<GameState>>) : React.ReactElement {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ".split('')
   let result = alphabet.map(l => {
+      var style: LooseObject = {}
       if (gameState.history.some(h => h.indexOf(l) != -1)) {
-        return <div key={l} className='letters-used-element' style={{backgroundColor: "rgb(198, 134, 206)"}}>{l}</div>
+        style.backgroundColor = "rgb(198, 134, 206)"
       }
-      else return <div key={l} className='letters-used-element'>{l}</div>
+      return <div key={l} className='letters-used-element' style={style} onClick={() => handleKeyInput(l, gameState, setGameState)}>{l}</div>
     }
   )
+  const auxStyle = {
+    backgroundColor: "rgb(134, 206, 178)"
+  }
+  result.splice(9, 0, <div key="BACK"   className='letters-used-element' style={auxStyle} onClick={() => handleKeyInput("BACKSPACE", gameState, setGameState)}>{"⌫"}</div>)
+  result.splice(19, 0, <div key="CLEAR" className='letters-used-element' style={auxStyle} onClick={() => handleKeyInput("CLEAR", gameState, setGameState)}>{"🗑"}</div>)
+  result.splice(29, 0, <div key="ENTER" className='letters-used-element' style={auxStyle} onClick={() => handleKeyInput("ENTER", gameState, setGameState)}>{"↵"}</div>)
   return <><div className='letters-used-container'>{result}</div></>
 }
+
+function handleKeyInput(key: string, gameState: GameState, setGameState: React.Dispatch<React.SetStateAction<GameState>>) {
+  function isLetter(s: string) : boolean {
+    return s.length == 1 && (s.toLowerCase() != s.toUpperCase())
+  }
+  switch(key) {
+    case "ENTER": {
+      console.log("enter")
+      if (WordList.indexOf(gameState.currentWord.toLowerCase()) != -1) {
+        console.log("exists")
+        setGameState({...gameState, currentWord: "", history: gameState.history.concat(gameState.currentWord)})
+      }
+      break;
+    }
+    case "BACKSPACE": {
+      let newCurrentWord = gameState.currentWord.slice(0, -1)
+      setGameState({...gameState, currentWord: newCurrentWord})
+      break;
+    }
+    case "CLEAR": {
+      setGameState({...gameState, currentWord: ""})
+      break;
+    }
+    default: {
+      if(isLetter(key) && gameState.currentWord.length < WordLength) {
+        let newCurrentWord = gameState.currentWord + key;
+        setGameState({...gameState, currentWord: newCurrentWord})
+      }
+      break;
+    }
+  }
+}
+
 
 function App() {
   const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["SPEAK"]})
   const [format, setFormat] = useState<GameFormat>(GameFormat.Tall);
 
-  function handleUserInput(event: KeyboardEvent) {
-    function isLetter(s: string) : boolean {
-      return s.length == 1 && (s.toLowerCase() != s.toUpperCase())
-    }
+  function handleKeyboardInput(event: KeyboardEvent) {
     let key = event.key.toUpperCase()
-    switch(key) {
-      case "ENTER": {
-        console.log("enter")
-        if (WordList.indexOf(gameState.currentWord.toLowerCase()) != -1) {
-          console.log("exists")
-          setGameState({...gameState, currentWord: "", history: gameState.history.concat(gameState.currentWord)})
-        }
-        break;
-      }
-      case "BACKSPACE": {
-        let newCurrentWord = gameState.currentWord.slice(0, -1)
-        setGameState({...gameState, currentWord: newCurrentWord})
-        break;
-      }
-      default: {
-        if(isLetter(key) && gameState.currentWord.length < WordLength) {
-          let newCurrentWord = gameState.currentWord + key;
-          setGameState({...gameState, currentWord: newCurrentWord})
-        }
-        break;
-      }
-    }
+    handleKeyInput(key, gameState, setGameState)
   }
 
   console.log(activeWords)
 
   useEffect(() => {
-    document.addEventListener('keydown', handleUserInput)
-    return () => document.removeEventListener('keydown', handleUserInput)
+    document.addEventListener('keydown', handleKeyboardInput)
+    return () => document.removeEventListener('keydown', handleKeyboardInput)
   }, [gameState.currentWord]) // magic
 
   let wordles = []
@@ -113,13 +134,13 @@ function App() {
           A game of 64ordle (and not enough whitespace)
         </div>
         {gameWon && showGameWon(gameState)}
-        {gameLost && showGameLost(gameState, numberOfCompleteWordles)}
+        {gameLost && showGameLost(numberOfCompleteWordles)}
         <div className="grid-container-element" style={{gridTemplateColumns: format}}>
           {wordles}
         </div>
       </div>
       <div className="footer">
-        {showLettersUsed(gameState)}
+        {showLettersUsed(gameState, setGameState)}
       </div>
     </>
   )

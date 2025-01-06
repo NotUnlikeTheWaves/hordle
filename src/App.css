@@ -2,6 +2,8 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  margin-top: 40px;
+  margin-bottom: 60px;
 }
 
 
@@ -28,7 +30,7 @@ td {
   display: grid;
   width: 20%;
   grid-gap: 3px;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   margin:auto;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -36,6 +38,7 @@ td {
 
 .letters-used-element {
   background-color: rgb(147, 147, 147);
+  cursor: pointer;
   /* max-width: 10px; */
 }
 
