@@ -21,9 +21,30 @@ function showGameLost(gameState: GameState, gamesWon: number)  : React.ReactElem
   )
 }
 
+enum GameFormat {
+  Tall = '1fr 1fr 1fr 1fr 1fr 1fr',
+  Medium = '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+  Wide = '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr'
+}
+
+function getNextFormat(format: GameFormat) : GameFormat {
+  switch(format) {
+    case GameFormat.Medium: {
+      return GameFormat.Tall
+    }
+    case GameFormat.Tall: {
+      return GameFormat.Wide
+    }
+    case GameFormat.Wide: {
+      return GameFormat.Medium
+    }
+  }
+}
+
 function App() {
   const [gameState, setGameState] = useState<GameState>({currentWord: "", history: ["SPEAK"]})
-  
+  const [format, setFormat] = useState<GameFormat>(GameFormat.Tall);
+
   function handleUserInput(event: KeyboardEvent) {
     function isLetter(s: string) : boolean {
       return s.length == 1 && (s.toLowerCase() != s.toUpperCase())
@@ -75,9 +96,10 @@ function App() {
   return (
     <>
       <div>
+        <button onClick={() => setFormat(getNextFormat(format))}>Change format</button>
       {gameWon && showGameWon(gameState)}
       {gameLost && showGameLost(gameState, numberOfCompleteWordles)}
-      <div className="grid-container-element">{wordles}
+      <div className="grid-container-element" style={{gridTemplateColumns: format}}>{wordles}
       </div>
       </div>
     </>
