@@ -38,23 +38,23 @@ function renderGuessAsRow(guess: String, props: WordHolderProps) : React.ReactEl
         }
     }
 
-    let letters = Array.from(guess).map((l, i) => <td style={{backgroundColor: coloring[i]}}>{l}</td>)
+    let letters = Array.from(guess).map((l, i) => <td key={i} style={{backgroundColor: coloring[i]}}>{l}</td>)
     return (
-        <tr style={{height: '27px', maxHeight: '27px'}}>{letters}</tr>
+        <tr key={props.word + guess} style={{height: '27px', maxHeight: '27px'}}>{letters}</tr>
     )
 }
 
 // Only the current input!
 function renderInputAsRow(guess: string) : React.ReactElement {
-    let letters = Array.from(guess.padEnd(WordLength, " ")).map(l => <td>{l}</td>)
+    let letters = Array.from(guess.padEnd(WordLength, " ")).map((l, i) => <td key={i}>{l}</td>)
     return (
-        <tr style={{height: '27px', maxHeight: '27px'}}>{letters}</tr>
+        <tr key="input" style={{height: '27px', maxHeight: '27px'}}>{letters}</tr>
     )
 }
 
 function renderUnaccessedRows(count: Number) : React.ReactElement {
-    let results = [...Array(count).keys()].map(_ =>
-        <tr>{[...Array(WordLength).keys()].map(_ => <td></td>)}</tr>
+    let results = [...Array(count).keys()].map(i =>
+        <tr key={i}>{[...Array(WordLength).keys()].map(j => <td key={j}></td>)}</tr>
     )
     return <>{results}</>
 }
@@ -64,7 +64,9 @@ function renderSolved(props: WordHolderProps, solvedIndex: number): React.ReactE
     return (
         <>
         <table>
-            {previousWords}
+            <tbody>
+                {previousWords}
+            </tbody>
         </table>
         </>
     )
@@ -78,9 +80,11 @@ function renderUnsolved(props: WordHolderProps) : React.ReactElement {
     return (
         <>
         <table>
-            {previousWords}
-            {current}
-            {unaccessedRows}
+            <tbody>
+                {previousWords}
+                {current}
+                {unaccessedRows}
+            </tbody>
         </table>
         </>
     )
