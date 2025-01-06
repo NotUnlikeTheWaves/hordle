@@ -17,22 +17,27 @@ function renderGuessAsRow(guess: String, props: WordHolderProps) : React.ReactEl
     // 2 pass coloring: GREEN (correct), YELLOW (it's there somewhere)
     var coloring = [...Array(guess.length)].fill(Correctness.NotInThere)
     var wordLeft = Array.from(props.word);
+    var guessLeft = Array.from(guess)
     const movedOverPlaceholder = '_'
     // Pass 1
     for(let i = 0; i < guess.length; i++) {
-        if (guess[i] == wordLeft[i]) {
+        if (guessLeft[i] == wordLeft[i]) {
+            // Mark both letters as having been used up for further analysis
             wordLeft[i] = movedOverPlaceholder
+            guessLeft[i] = movedOverPlaceholder
             coloring[i] = Correctness.Correct
         }
     }
     for(let i = 0; i < guess.length; i++) {
         if (wordLeft[i] == movedOverPlaceholder) {
+            // This letter is already green
             continue
         }
         for(let j = 0; j < guess.length; j++) {
-            if (guess[i] == wordLeft[j]) {
+            if (wordLeft[i] == guessLeft[j]) {
                 wordLeft[i] = movedOverPlaceholder
-                coloring[i] = Correctness.WrongPosition
+                guessLeft[j] = movedOverPlaceholder
+                coloring[j] = Correctness.WrongPosition
                 break
             }
         }
