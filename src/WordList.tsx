@@ -1129,6 +1129,7 @@ const WordList =
   "libel",
   "liege",
   "light",
+  "ligma",
   "liken",
   "lilac",
   "limbo",
