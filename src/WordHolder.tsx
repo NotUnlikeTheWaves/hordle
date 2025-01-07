@@ -1,9 +1,10 @@
 // import { MaxGuesses, WordLength } from './Constants'
 import { MaxGuesses, WordLength } from './Constants';
-import { GameState, LooseObject } from './Types';
+import { GameState } from './Types';
 type WordHolderProps = {
     word: string;
-    gameState: GameState
+    gameState: GameState,
+    autoComplete: () => void
 }
 
 enum Correctness {
@@ -113,14 +114,15 @@ function renderUnsolved(props: WordHolderProps) : React.ReactElement {
     let unaccessedRowCount = MaxGuesses - (previousWords.length + 1)
     let unaccessedRows = renderUnaccessedRows(unaccessedRowCount)
     let summaryColors = renderIcons(props)
-    let fullyFilled = !summaryColors.some(c => c != Correctness.Correct)
-    let className = fullyFilled ? 'auto-complete' : ''
+    let canAutocomplete = !summaryColors.some(c => c != Correctness.Correct)
+    let className = canAutocomplete ? 'auto-complete' : ''
+    let title = canAutocomplete ? 'Click to complete' : ''
     return (
         <>
         <div>
             {summaryColors.map(correctnessToEmoji)}
         </div>
-        <table className={className}>
+        <table title={title} className={className} onClick={() => canAutocomplete && props.autoComplete()}>
             <tbody>
                 {previousWords}
                 {current}

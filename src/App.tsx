@@ -114,7 +114,9 @@ function App() {
   let wordles = []
   var numberOfCompleteWordles = 0
   for(let i = 0; i < activeWords.length; i++) {
-    wordles.push(<div className="grid-child-element purple"><WordHolder key={i} word={activeWords[i]} gameState={gameState} /></div>)
+    // Autocomplete works by adding the word into the word history, rest of the thing should handle the rest.
+    let autoComplete = () => setGameState({...gameState, currentWord: "", history: gameState.history.concat(activeWords[i])})
+    wordles.push(<div className="grid-child-element purple"><WordHolder key={i} word={activeWords[i]} gameState={gameState} autoComplete={autoComplete} /></div>)
     if (gameState.history.indexOf(activeWords[i]) != -1) {
       numberOfCompleteWordles++
     }
@@ -128,7 +130,7 @@ function App() {
       <div>
         <div className="top">
           <button onClick={() => setFormat(getNextFormat(format))}>Change format</button>
-          A game of 64ordle (and not enough whitespace)
+          A game of *ordle (and not enough whitespace)
         </div>
         {gameWon && showGameWon(gameState)}
         {gameLost && showGameLost(numberOfCompleteWordles)}
