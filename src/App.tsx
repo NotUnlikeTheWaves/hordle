@@ -109,7 +109,7 @@ function App() {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyboardInput)
     return () => document.removeEventListener('keydown', handleKeyboardInput)
-  }, [gameState.currentWord]) // magic
+  }, [gameState.currentWord, gameState.history]) // magic (x2, because gameState.history is needed here too to work with autcomplete- this effect was never meant for autocomplete!)
 
   let wordles = []
   var numberOfCompleteWordles = 0
