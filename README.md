@@ -23,3 +23,4 @@ The following things would be ideal to have in this app:
 - Make mobile more user-friendly
 - Fix appearance bugs on Safari
 - Maybe a better game over screen?
+- Make the autocomplete logic a bit more progressive (one missing letter but it's yellow -> can complete)
