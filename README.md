@@ -1,50 +1,25 @@
-# React + TypeScript + Vite
+# Hordle
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Hordle is a *ordle clone based primarily on [64ordle](https://64ordle.au/) and similar n-sized Wordle variants. The inspiration from building this is a combination of being too burnt out to play Wordles anymore but still finding it fun to develop one. 
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+Current features are:
+- Click to autocomplete
+- On screen keyboard for mobile (needs some more work)
+- Game won/over screens
+- Daily new words
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Developing and running
+Clone the repo, run `npm install` followed by `npm run dev`
 
-- Configure the top-level `parserOptions` property like this:
+## Contributing
+This project is open to contributions! Frontend is not my specialisation so anything from feature additions (pls make an issue beforehand) to bug fixes to CSS/styling and refactors is a welcome addition to the project.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### Contribution wish list
+The following things would be ideal to have in this app:
+- Saving game state to local storage
+- Make mobile more user-friendly
+- Fix appearance bugs on Safari
+- Maybe a better game over screen?
