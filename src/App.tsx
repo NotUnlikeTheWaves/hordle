@@ -7,8 +7,8 @@ import { WordList } from './WordList'
 import { getWordList } from './Random'
 
 
-// const activeWords = getWordList()
-const activeWords = ["LIBEL", "HELLO", "THERE"]
+const activeWords = getWordList()
+// const activeWords = ["LIBEL", "HELLO", "THERE"] // testing mode
 
 function showGameWon(gameState: GameState) : React.ReactElement {
   return (
@@ -23,7 +23,7 @@ function showGameLost(gamesWon: number)  : React.ReactElement {
 }
 
 enum GameFormat {
-  Tall = '1fr 1fr 1fr 1fr 1fr 1fr',
+  Tall = '1fr 1fr 1fr 1fr',
   Medium = '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
   Wide = '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr'
 }
