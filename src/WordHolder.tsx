@@ -1,6 +1,6 @@
 // import { MaxGuesses, WordLength } from './Constants'
 import { MaxGuesses, WordLength } from './Constants';
-import { GameState } from './Types';
+import { GameState, LooseObject } from './Types';
 type WordHolderProps = {
     word: string;
     gameState: GameState
@@ -74,6 +74,7 @@ function renderSolved(props: WordHolderProps, solvedIndex: number): React.ReactE
     let previousWords = props.gameState.history.slice(0, solvedIndex+1).map(h => renderHistoryPerRow(h, props))
     return (
         <>
+        ✅
         <table>
             <tbody>
                 {previousWords}
@@ -91,12 +92,11 @@ function correctnessToEmoji(c: Correctness) : string {
     }
 }
 
-function renderIcons(props: WordHolderProps) : React.ReactElement {
-    let colors = [...Array(WordLength)].fill(Correctness.NotInThere)
+function renderIcons(props: WordHolderProps) : Array<Correctness> {
+    let colors: Array<Correctness> = [...Array(WordLength)].fill(Correctness.NotInThere)
     if(props.gameState.history.length) {
         let array = props.gameState.history.map(h => getHistoryColoring(h, props))
         let coloredHistory = array[0].map((_, colIndex) => array.map(row => row[colIndex])); // https://stackoverflow.com/a/17428705
-        // pass one
         for(let i = colors.length - 1; i >= 0; i--) { // descend so we can delete from the array too
             if (coloredHistory[i].some(h => h == Correctness.Correct)) {
                 colors[i] = Correctness.Correct
@@ -104,7 +104,7 @@ function renderIcons(props: WordHolderProps) : React.ReactElement {
             }
         }
     }
-    return <>{colors.map(correctnessToEmoji)}</>
+    return colors
 }
 
 function renderUnsolved(props: WordHolderProps) : React.ReactElement {
@@ -112,12 +112,15 @@ function renderUnsolved(props: WordHolderProps) : React.ReactElement {
     let current = renderInputAsRow(props.gameState.currentWord)
     let unaccessedRowCount = MaxGuesses - (previousWords.length + 1)
     let unaccessedRows = renderUnaccessedRows(unaccessedRowCount)
+    let summaryColors = renderIcons(props)
+    let fullyFilled = !summaryColors.some(c => c != Correctness.Correct)
+    let className = fullyFilled ? 'auto-complete' : ''
     return (
         <>
         <div>
-            {renderIcons(props)}
+            {summaryColors.map(correctnessToEmoji)}
         </div>
-        <table>
+        <table className={className}>
             <tbody>
                 {previousWords}
                 {current}

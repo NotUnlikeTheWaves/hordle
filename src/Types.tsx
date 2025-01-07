@@ -2,5 +2,7 @@ type GameState = {
     currentWord: string
     history: Array<string>
 }
-
-export type {GameState}
+interface LooseObject {
+    [key: string]: any
+  }
+export type {GameState, LooseObject}

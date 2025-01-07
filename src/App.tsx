@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { WordHolder } from './WordHolder'
-import { GameState } from './Types'
+import { GameState, LooseObject } from './Types'
 import { WordLength, NumberOfWordles, MaxGuesses } from './Constants'
 import { WordList } from './WordList'
 import { getWordList } from './Random'
-
-interface LooseObject {
-  [key: string]: any
-}
 
 
 // const activeWords = getWordList()
@@ -49,7 +45,7 @@ function getNextFormat(format: GameFormat) : GameFormat {
 function showLettersUsed(gameState: GameState, setGameState: React.Dispatch<React.SetStateAction<GameState>>) : React.ReactElement {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ".split('')
   let result = alphabet.map(l => {
-      var style: LooseObject = {}
+      let style: LooseObject = {}
       if (gameState.history.some(h => h.indexOf(l) != -1)) {
         style.backgroundColor = "rgb(198, 134, 206)"
       }
