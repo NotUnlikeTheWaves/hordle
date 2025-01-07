@@ -2,6 +2,9 @@
 
 Hordle is a *ordle clone based primarily on [64ordle](https://64ordle.au/) and similar n-sized Wordle variants. The inspiration from building this is a combination of being too burnt out to play Wordles anymore but still finding it fun to develop one. 
 
+![ôfbylding](https://github.com/user-attachments/assets/263d8544-ba20-4ff2-9607-fdfaac2f54b0)
+
+
 
 ## Features
 
