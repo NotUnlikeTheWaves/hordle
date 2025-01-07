@@ -130,7 +130,7 @@ function App() {
       <div>
         <div className="top">
           <button onClick={() => setFormat(getNextFormat(format))}>Change format</button>
-          A game of *ordle (and not enough whitespace)
+          A game of *ordle (and not enough whitespace) <a href='https://github.com/NotUnlikeTheWaves/hordle'>Source code here</a>
         </div>
         {gameWon && showGameWon(gameState)}
         {gameLost && showGameLost(numberOfCompleteWordles)}
