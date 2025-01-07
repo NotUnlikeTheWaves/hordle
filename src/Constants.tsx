@@ -1,4 +1,4 @@
-const MaxGuesses = 30;
+const MaxGuesses = 38;
 const NumberOfWordles = 32;
 const WordLength = 5;
 

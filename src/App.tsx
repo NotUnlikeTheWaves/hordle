@@ -11,8 +11,8 @@ interface LooseObject {
 }
 
 
-const activeWords = getWordList()
-// const activeWords = ["LIBEL", "HELLO", "THERE"]
+// const activeWords = getWordList()
+const activeWords = ["LIBEL", "HELLO", "THERE"]
 
 function showGameWon(gameState: GameState) : React.ReactElement {
   return (
