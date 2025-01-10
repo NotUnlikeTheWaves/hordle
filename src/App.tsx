@@ -7,8 +7,8 @@ import { WordList } from './WordList'
 import { getWordList } from './Random'
 
 
-// const activeWords = getWordList()
-const activeWords = ["LIBEL", "HELLO", "THERE", "BRIEF"] // testing mode
+const activeWords = getWordList()
+// const activeWords = ["LIBEL", "HELLO", "THERE", "BRIEF"] // testing mode
 
 function showGameWon(gameState: GameState): React.ReactElement {
   return (
