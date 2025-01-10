@@ -67,19 +67,19 @@ function correctnessToEmoji(c: Correctness): string {
 
 function renderUnsolved(props: WordHolderProps): React.ReactElement {
     let history = getHistory(props.word, props.gameState.history)
-    let historyRender = renderHistory(history)
+    let fullHistory = createCompletionStatus(props.word, history)
+    let historyRender = renderHistory(fullHistory.history)
     let current = renderInputAsRow(props.gameState.currentGuess)
     let unaccessedRowCount = MaxGuesses - (history.length + 1)
     let unaccessedRows = renderUnaccessedRows(unaccessedRowCount)
-    let autoCompleteStatus = createCompletionStatus(props.word, history)
-    let className = autoCompleteStatus.canAutoComplete ? 'auto-complete' : ''
-    let title = autoCompleteStatus.canAutoComplete ? 'Click to complete' : ''
+    let className = fullHistory.canAutoComplete ? 'auto-complete' : ''
+    let title = fullHistory.canAutoComplete ? 'Click to complete' : ''
     return (
         <>
             <div>
-                {autoCompleteStatus.status.map(correctnessToEmoji)}
+                {fullHistory.autoCompleteColoring.map(correctnessToEmoji)}
             </div>
-            <table title={title} className={className} onClick={() => autoCompleteStatus.canAutoComplete && props.autoComplete()}>
+            <table title={title} className={className} onClick={() => fullHistory.canAutoComplete && props.autoComplete()}>
                 <tbody>
                     {historyRender}
                     {current}

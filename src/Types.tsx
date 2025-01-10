@@ -11,7 +11,7 @@ interface LooseObject {
 enum Correctness {
   Correct = "rgb(8, 159, 18)",
   WrongPosition = "rgb(198, 178, 0)",
-  LastLeft = "rgb(38, 96, 255)",
+  LastLeft = "rgb(255, 38, 172)",
   NotInThere = "Black"
 }
 export type { GameState, LooseObject }

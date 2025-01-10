@@ -2,15 +2,17 @@ import { WordLength } from "./Constants";
 import { Correctness } from "./Types";
 
 type AutoCompleteStatus = {
-    status: Array<Correctness>
+    autoCompleteColoring: Array<Correctness>
+    history: [string, Correctness[]][]
     canAutoComplete: boolean
 }
 
-function createCompletionStatus(word: string, history_: [string, Correctness[]][]): AutoCompleteStatus {
+function createHistoryWithCompletion(word: string, history: [string, Correctness[]][]): AutoCompleteStatus {
     let colors: Array<Correctness> = [...Array(WordLength)].fill(Correctness.NotInThere)
-    let history = history_.map(i => i[1])
-    if (history.length) {
-        let coloredHistory = history[0].map((_, colIndex) => history.map(row => row[colIndex])); // https://stackoverflow.com/a/17428705
+    // Pass 1: Looking in the verticals, see if any are green
+    let vertCorrectness = history.map(i => i[1])
+    if (vertCorrectness.length) {
+        let coloredHistory = vertCorrectness[0].map((_, colIndex) => vertCorrectness.map(row => row[colIndex])); // https://stackoverflow.com/a/17428705
         for (let i = colors.length - 1; i >= 0; i--) { // descend so we can delete from the array too
             if (coloredHistory[i].some(h => h == Correctness.Correct)) {
                 colors[i] = Correctness.Correct
@@ -18,8 +20,31 @@ function createCompletionStatus(word: string, history_: [string, Correctness[]][
             }
         }
     }
+
+    // Pass two: Look vertical to see if any one is still missing
+    if (colors.filter(c => c == Correctness.NotInThere).length == 1) {
+        let missingIndex = colors.indexOf(Correctness.NotInThere)
+        let missingLetter = word[missingIndex]
+        let skip = Array.from(word).filter(l => l == missingLetter).length - 1
+        outer:
+        for (let i = history.length - 1; i >= 0; i--) {
+            let iSkip = skip
+            let hWord = history[i][0]
+            for (let j = 0; j < hWord.length; j++) {
+                if (hWord[j] == missingLetter) {
+                    if (iSkip == 0) {
+                        history[i][1][j] = Correctness.LastLeft
+                        colors[missingIndex] = Correctness.LastLeft
+                        break outer
+                    }
+                    iSkip--
+                }
+            }
+        }
+    }
     return {
-        status: colors,
+        autoCompleteColoring: colors,
+        history: history,
         canAutoComplete: !colors.some(c => c == Correctness.NotInThere)
     }
 }
@@ -70,4 +95,4 @@ function getHistoryPerRow(guess: String, word: string): Array<Correctness> {
 }
 
 export type { AutoCompleteStatus }
-export { getHistory, createCompletionStatus }
+export { getHistory, createHistoryWithCompletion as createCompletionStatus }
