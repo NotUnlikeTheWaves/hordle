@@ -1,15 +1,11 @@
 // import { MaxGuesses, WordLength } from './Constants'
 import { MaxGuesses, WordLength } from './Constants';
 import { Correctness, GameState } from './Types';
-import { createCompletionStatus, getHistoryColoring } from './WordLogic';
+import { createCompletionStatus, getHistory } from './WordLogic';
 type WordHolderProps = {
     word: string;
     gameState: GameState,
     autoComplete: () => void
-}
-
-function getHistory(word: string, historicGuesses: Array<string>): [string, Correctness[]][] {
-    return historicGuesses.map(h => [h, getHistoryColoring(h, word)])
 }
 
 function renderHistory(historyColoring: [string, Correctness[]][]): React.ReactElement {
@@ -47,13 +43,12 @@ function renderUnaccessedRows(count: number): React.ReactElement {
 function renderSolved(props: WordHolderProps, solvedIndex: number): React.ReactElement {
     // let previousWords = props.gameState.history.slice(0, solvedIndex + 1).map(h => renderHistoryPerRow(h, props.word))
     let history = getHistory(props.word, props.gameState.history.slice(0, solvedIndex + 1))
-    let renderedHistory = renderHistory(history)
     return (
         <>
             ✅
             <table>
                 <tbody>
-                    {renderedHistory}
+                    {renderHistory(history)}
                 </tbody>
             </table>
         </>
@@ -72,22 +67,19 @@ function correctnessToEmoji(c: Correctness): string {
 
 function renderUnsolved(props: WordHolderProps): React.ReactElement {
     let history = getHistory(props.word, props.gameState.history)
-
-    // let historyRender = props.gameState.history.map(h => renderHistoryPerRow(h, props.word))
     let historyRender = renderHistory(history)
     let current = renderInputAsRow(props.gameState.currentGuess)
     let unaccessedRowCount = MaxGuesses - (history.length + 1)
     let unaccessedRows = renderUnaccessedRows(unaccessedRowCount)
-    let summaryColors = createCompletionStatus(props.word, props.gameState.history)
-    let canAutocomplete = !summaryColors.some(c => c != Correctness.Correct)
-    let className = canAutocomplete ? 'auto-complete' : ''
-    let title = canAutocomplete ? 'Click to complete' : ''
+    let autoCompleteStatus = createCompletionStatus(props.word, history)
+    let className = autoCompleteStatus.canAutoComplete ? 'auto-complete' : ''
+    let title = autoCompleteStatus.canAutoComplete ? 'Click to complete' : ''
     return (
         <>
             <div>
-                {summaryColors.map(correctnessToEmoji)}
+                {autoCompleteStatus.status.map(correctnessToEmoji)}
             </div>
-            <table title={title} className={className} onClick={() => canAutocomplete && props.autoComplete()}>
+            <table title={title} className={className} onClick={() => autoCompleteStatus.canAutoComplete && props.autoComplete()}>
                 <tbody>
                     {historyRender}
                     {current}

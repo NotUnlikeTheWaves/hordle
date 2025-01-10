@@ -1,16 +1,16 @@
 import { WordLength } from "./Constants";
 import { Correctness } from "./Types";
 
-interface AutoCompleteStatus {
+type AutoCompleteStatus = {
     status: Array<Correctness>
     canAutoComplete: boolean
 }
 
-function createCompletionStatus(word: string, history: Array<string>): Array<Correctness> {
+function createCompletionStatus(word: string, history_: [string, Correctness[]][]): AutoCompleteStatus {
     let colors: Array<Correctness> = [...Array(WordLength)].fill(Correctness.NotInThere)
+    let history = history_.map(i => i[1])
     if (history.length) {
-        let array = history.map(h => getHistoryColoring(h, word))
-        let coloredHistory = array[0].map((_, colIndex) => array.map(row => row[colIndex])); // https://stackoverflow.com/a/17428705
+        let coloredHistory = history[0].map((_, colIndex) => history.map(row => row[colIndex])); // https://stackoverflow.com/a/17428705
         for (let i = colors.length - 1; i >= 0; i--) { // descend so we can delete from the array too
             if (coloredHistory[i].some(h => h == Correctness.Correct)) {
                 colors[i] = Correctness.Correct
@@ -18,10 +18,17 @@ function createCompletionStatus(word: string, history: Array<string>): Array<Cor
             }
         }
     }
-    return colors
+    return {
+        status: colors,
+        canAutoComplete: !colors.some(c => c == Correctness.NotInThere)
+    }
 }
 
-function getHistoryColoring(guess: String, word: string): Array<Correctness> {
+function getHistory(word: string, historicGuesses: Array<string>): [string, Correctness[]][] {
+    return historicGuesses.map(h => [h, getHistoryPerRow(h, word)])
+}
+
+function getHistoryPerRow(guess: String, word: string): Array<Correctness> {
     var coloring: Array<Correctness> = [...Array(guess.length)].fill(Correctness.NotInThere);
     var wordLeft = Array.from(word);
     var guessLeft = Array.from(guess);
@@ -63,4 +70,4 @@ function getHistoryColoring(guess: String, word: string): Array<Correctness> {
 }
 
 export type { AutoCompleteStatus }
-export { getHistoryColoring, createCompletionStatus }
+export { getHistory, createCompletionStatus }
