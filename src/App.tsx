@@ -7,16 +7,16 @@ import { WordList } from './WordList'
 import { getWordList } from './Random'
 
 
-const activeWords = getWordList()
-// const activeWords = ["LIBEL", "HELLO", "THERE"] // testing mode
+// const activeWords = getWordList()
+const activeWords = ["LIBEL", "HELLO", "THERE", "BRIEF"] // testing mode
 
-function showGameWon(gameState: GameState) : React.ReactElement {
+function showGameWon(gameState: GameState): React.ReactElement {
   return (
     <h1>Congrats! You completed all {NumberOfWordles} wordles in {gameState.history.length}/{MaxGuesses} attempts.</h1>
   )
 }
 
-function showGameLost(gamesWon: number)  : React.ReactElement {
+function showGameLost(gamesWon: number): React.ReactElement {
   return (
     <h1>You lose! You completed {gamesWon} wordles in {MaxGuesses} attempts.</h1>
   )
@@ -28,8 +28,8 @@ enum GameFormat {
   Wide = '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr'
 }
 
-function getNextFormat(format: GameFormat) : GameFormat {
-  switch(format) {
+function getNextFormat(format: GameFormat): GameFormat {
+  switch (format) {
     case GameFormat.Medium: {
       return GameFormat.Tall
     }
@@ -42,52 +42,52 @@ function getNextFormat(format: GameFormat) : GameFormat {
   }
 }
 
-function showLettersUsed(gameState: GameState, setGameState: React.Dispatch<React.SetStateAction<GameState>>) : React.ReactElement {
+function showLettersUsed(gameState: GameState, setGameState: React.Dispatch<React.SetStateAction<GameState>>): React.ReactElement {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ".split('')
   let result = alphabet.map(l => {
-      let style: LooseObject = {}
-      if (gameState.history.some(h => h.indexOf(l) != -1)) {
-        style.backgroundColor = "rgb(198, 134, 206)"
-      }
-      return <div key={l} className='letters-used-element' style={style} onClick={() => handleKeyInput(l, gameState, setGameState)}>{l}</div>
+    let style: LooseObject = {}
+    if (gameState.history.some(h => h.indexOf(l) != -1)) {
+      style.backgroundColor = "rgb(198, 134, 206)"
     }
+    return <div key={l} className='letters-used-element' style={style} onClick={() => handleKeyInput(l, gameState, setGameState)}>{l}</div>
+  }
   )
   const auxStyle = {
     backgroundColor: "rgb(134, 206, 178)"
   }
-  result.splice(9, 0, <div key="BACK"   className='letters-used-element' style={auxStyle} onClick={() => handleKeyInput("BACKSPACE", gameState, setGameState)}>{"⌫"}</div>)
+  result.splice(9, 0, <div key="BACK" className='letters-used-element' style={auxStyle} onClick={() => handleKeyInput("BACKSPACE", gameState, setGameState)}>{"⌫"}</div>)
   result.splice(19, 0, <div key="CLEAR" className='letters-used-element' style={auxStyle} onClick={() => handleKeyInput("CLEAR", gameState, setGameState)}>{"🗑"}</div>)
   result.splice(29, 0, <div key="ENTER" className='letters-used-element' style={auxStyle} onClick={() => handleKeyInput("ENTER", gameState, setGameState)}>{"↵"}</div>)
   return <><div className='letters-used-container'>{result}</div></>
 }
 
 function handleKeyInput(key: string, gameState: GameState, setGameState: React.Dispatch<React.SetStateAction<GameState>>) {
-  function isLetter(s: string) : boolean {
+  function isLetter(s: string): boolean {
     return s.length == 1 && (s.toLowerCase() != s.toUpperCase())
   }
-  switch(key) {
+  switch (key) {
     case "ENTER": {
       console.log("enter")
-      if (WordList.indexOf(gameState.currentWord.toLowerCase()) != -1) {
+      if (WordList.indexOf(gameState.currentGuess.toLowerCase()) != -1) {
         console.log("exists")
-        setGameState({...gameState, currentWord: "", history: gameState.history.concat(gameState.currentWord)})
+        setGameState({ ...gameState, currentGuess: "", history: gameState.history.concat(gameState.currentGuess) })
       }
       break;
     }
     case "BACKSPACE": {
-      let newCurrentWord = gameState.currentWord.slice(0, -1)
-      setGameState({...gameState, currentWord: newCurrentWord})
+      let newCurrentWord = gameState.currentGuess.slice(0, -1)
+      setGameState({ ...gameState, currentGuess: newCurrentWord })
       break;
     }
     case "DELETE":
     case "CLEAR": {
-      setGameState({...gameState, currentWord: ""})
+      setGameState({ ...gameState, currentGuess: "" })
       break;
     }
     default: {
-      if(isLetter(key) && gameState.currentWord.length < WordLength) {
-        let newCurrentWord = gameState.currentWord + key;
-        setGameState({...gameState, currentWord: newCurrentWord})
+      if (isLetter(key) && gameState.currentGuess.length < WordLength) {
+        let newCurrentWord = gameState.currentGuess + key;
+        setGameState({ ...gameState, currentGuess: newCurrentWord })
       }
       break;
     }
@@ -96,7 +96,7 @@ function handleKeyInput(key: string, gameState: GameState, setGameState: React.D
 
 
 function App() {
-  const [gameState, setGameState] = useState<GameState>({currentWord: "", history: []})
+  const [gameState, setGameState] = useState<GameState>({ currentGuess: "", history: [] })
   const [format, setFormat] = useState<GameFormat>(GameFormat.Tall);
 
   function handleKeyboardInput(event: KeyboardEvent) {
@@ -109,13 +109,13 @@ function App() {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyboardInput)
     return () => document.removeEventListener('keydown', handleKeyboardInput)
-  }, [gameState.currentWord, gameState.history]) // magic (x2, because gameState.history is needed here too to work with autcomplete- this effect was never meant for autocomplete!)
+  }, [gameState.currentGuess, gameState.history]) // magic (x2, because gameState.history is needed here too to work with autcomplete- this effect was never meant for autocomplete!)
 
   let wordles = []
   var numberOfCompleteWordles = 0
-  for(let i = 0; i < activeWords.length; i++) {
+  for (let i = 0; i < activeWords.length; i++) {
     // Autocomplete works by adding the word into the word history, rest of the thing should handle the rest.
-    let autoComplete = () => setGameState({...gameState, currentWord: "", history: gameState.history.concat(activeWords[i])})
+    let autoComplete = () => setGameState({ ...gameState, currentGuess: "", history: gameState.history.concat(activeWords[i]) })
     wordles.push(<div className="grid-child-element purple"><WordHolder key={i} word={activeWords[i]} gameState={gameState} autoComplete={autoComplete} /></div>)
     if (gameState.history.indexOf(activeWords[i]) != -1) {
       numberOfCompleteWordles++
@@ -134,7 +134,7 @@ function App() {
         </div>
         {gameWon && showGameWon(gameState)}
         {gameLost && showGameLost(numberOfCompleteWordles)}
-        <div className="grid-container-element" style={{gridTemplateColumns: format}}>
+        <div className="grid-container-element" style={{ gridTemplateColumns: format }}>
           {wordles}
         </div>
       </div>

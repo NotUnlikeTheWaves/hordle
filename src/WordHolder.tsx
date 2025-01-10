@@ -1,134 +1,99 @@
 // import { MaxGuesses, WordLength } from './Constants'
 import { MaxGuesses, WordLength } from './Constants';
-import { GameState } from './Types';
+import { Correctness, GameState } from './Types';
+import { createCompletionStatus, getHistoryColoring } from './WordLogic';
 type WordHolderProps = {
     word: string;
     gameState: GameState,
     autoComplete: () => void
 }
 
-enum Correctness {
-    Correct = "rgb(8, 159, 18)",
-    WrongPosition = "rgb(198, 178, 0)",
-    NotInThere = "Black"
+function getHistory(word: string, historicGuesses: Array<string>): [string, Correctness[]][] {
+    return historicGuesses.map(h => [h, getHistoryColoring(h, word)])
 }
 
-// Only historic guesses in here!
-function renderHistoryPerRow(historicGuess: String, props: WordHolderProps) : React.ReactElement {
-    // 2 pass coloring: GREEN (correct), YELLOW (it's there somewhere)
-    var coloring: Array<Correctness> = getHistoryColoring(historicGuess, props);
-
-    let letters = Array.from(historicGuess).map((l, i) => <td key={i} style={{backgroundColor: coloring[i]}}>{l}</td>)
-    return (
-        <tr key={props.word + historicGuess} style={{height: '27px', maxHeight: '27px'}}>{letters}</tr>
-    )
+function renderHistory(historyColoring: [string, Correctness[]][]): React.ReactElement {
+    return <>
+        {historyColoring.map(([word, correctness], i) =>
+            <>
+                <tr key={`${word}-${i}`} style={{ height: '27px', maxHeight: '27px' }}>
+                    {
+                        correctness.map((c, j) => <td key={`${word}-${j}-${i}`} style={{ backgroundColor: c }}>{word[j]}</td>)
+                    }
+                </tr>
+            </>
+        )}
+    </>
 }
 
-function getHistoryColoring(guess: String, props: WordHolderProps) : Array<Correctness> {
-    var coloring: Array<Correctness> = [...Array(guess.length)].fill(Correctness.NotInThere);
-    var wordLeft = Array.from(props.word);
-    var guessLeft = Array.from(guess);
-    const movedOverPlaceholder = '_';
-    // Pass 1
-    for (let i = 0; i < guess.length; i++) {
-        if (guessLeft[i] == wordLeft[i]) {
-            // Mark both letters as having been used up for further analysis
-            wordLeft[i] = movedOverPlaceholder;
-            guessLeft[i] = movedOverPlaceholder;
-            coloring[i] = Correctness.Correct;
-        }
-    }
-    for (let i = 0; i < guess.length; i++) {
-        if (wordLeft[i] == movedOverPlaceholder) {
-            // This letter is already green
-            continue;
-        }
-        for (let j = 0; j < guess.length; j++) {
-            if (wordLeft[i] == guessLeft[j]) {
-                wordLeft[i] = movedOverPlaceholder;
-                guessLeft[j] = movedOverPlaceholder;
-                coloring[j] = Correctness.WrongPosition;
-                break;
-            }
-        }
-    }
-    return coloring;
-}
+
 
 // Only the current input!
-function renderInputAsRow(guess: string) : React.ReactElement {
+function renderInputAsRow(guess: string): React.ReactElement {
     let letters = Array.from(guess.padEnd(WordLength, " ")).map((l, i) => <td key={i}>{l}</td>)
     return (
-        <tr key="input" style={{height: '27px', maxHeight: '27px'}}>{letters}</tr>
+        <tr key="input" style={{ height: '27px', maxHeight: '27px' }}>{letters}</tr>
     )
 }
 
-function renderUnaccessedRows(count: number) : React.ReactElement {
-    if(count < 0) return <></>
+function renderUnaccessedRows(count: number): React.ReactElement {
+    if (count < 0) return <></>
     let results = [...Array(count).keys()].map(i =>
-        <tr key={i}>{[...Array(WordLength).keys()].map(j => <td key={j}></td>)}</tr>
+        <tr key={i}>{[...Array(WordLength).keys()].map(j => <td key={`${i}-${j}`}></td>)}</tr>
     )
     return <>{results}</>
 }
 
 function renderSolved(props: WordHolderProps, solvedIndex: number): React.ReactElement {
-    let previousWords = props.gameState.history.slice(0, solvedIndex+1).map(h => renderHistoryPerRow(h, props))
+    // let previousWords = props.gameState.history.slice(0, solvedIndex + 1).map(h => renderHistoryPerRow(h, props.word))
+    let history = getHistory(props.word, props.gameState.history.slice(0, solvedIndex + 1))
+    let renderedHistory = renderHistory(history)
     return (
         <>
-        ✅
-        <table>
-            <tbody>
-                {previousWords}
-            </tbody>
-        </table>
+            ✅
+            <table>
+                <tbody>
+                    {renderedHistory}
+                </tbody>
+            </table>
         </>
     )
 }
 
-function correctnessToEmoji(c: Correctness) : string {
-    switch(c) {
+function correctnessToEmoji(c: Correctness): string {
+    switch (c) {
         case Correctness.Correct: return '🟩'
         case Correctness.WrongPosition: return '🟨'
         case Correctness.NotInThere: return '🟥'
+        case Correctness.LastLeft: return '🟦'
     }
 }
 
-function renderIcons(props: WordHolderProps) : Array<Correctness> {
-    let colors: Array<Correctness> = [...Array(WordLength)].fill(Correctness.NotInThere)
-    if(props.gameState.history.length) {
-        let array = props.gameState.history.map(h => getHistoryColoring(h, props))
-        let coloredHistory = array[0].map((_, colIndex) => array.map(row => row[colIndex])); // https://stackoverflow.com/a/17428705
-        for(let i = colors.length - 1; i >= 0; i--) { // descend so we can delete from the array too
-            if (coloredHistory[i].some(h => h == Correctness.Correct)) {
-                colors[i] = Correctness.Correct
-                coloredHistory.splice(i, 1)
-            }
-        }
-    }
-    return colors
-}
 
-function renderUnsolved(props: WordHolderProps) : React.ReactElement {
-    let previousWords = props.gameState.history.map(h => renderHistoryPerRow(h, props))
-    let current = renderInputAsRow(props.gameState.currentWord)
-    let unaccessedRowCount = MaxGuesses - (previousWords.length + 1)
+function renderUnsolved(props: WordHolderProps): React.ReactElement {
+    let history = getHistory(props.word, props.gameState.history)
+
+    // let historyRender = props.gameState.history.map(h => renderHistoryPerRow(h, props.word))
+    let historyRender = renderHistory(history)
+    let current = renderInputAsRow(props.gameState.currentGuess)
+    let unaccessedRowCount = MaxGuesses - (history.length + 1)
     let unaccessedRows = renderUnaccessedRows(unaccessedRowCount)
-    let summaryColors = renderIcons(props)
+    let summaryColors = createCompletionStatus(props.word, props.gameState.history)
     let canAutocomplete = !summaryColors.some(c => c != Correctness.Correct)
     let className = canAutocomplete ? 'auto-complete' : ''
     let title = canAutocomplete ? 'Click to complete' : ''
     return (
         <>
-        <div>
-            {summaryColors.map(correctnessToEmoji)}
-        </div>
-        <table title={title} className={className} onClick={() => canAutocomplete && props.autoComplete()}>
-            <tbody>
-                {previousWords}
-                {current}
-                {unaccessedRows}
-            </tbody>
-        </table>
+            <div>
+                {summaryColors.map(correctnessToEmoji)}
+            </div>
+            <table title={title} className={className} onClick={() => canAutocomplete && props.autoComplete()}>
+                <tbody>
+                    {historyRender}
+                    {current}
+                    {unaccessedRows}
+                </tbody>
+            </table>
         </>
     )
 }
@@ -142,4 +107,4 @@ function WordHolder(props: WordHolderProps) {
     }
 }
 
-export {WordHolder}
+export { WordHolder }
