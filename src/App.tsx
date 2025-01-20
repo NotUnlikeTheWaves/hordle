@@ -129,6 +129,9 @@ function App() {
     <>
       <div>
         <div className="top">
+          <div className='guessCounter'>
+            Guesses: {gameState.history.length} / {MaxGuesses}
+          </div>
           <button onClick={() => setFormat(getNextFormat(format))}>Change format</button>
           A game of *ordle (and not enough whitespace) <a href='https://github.com/NotUnlikeTheWaves/hordle'>Source code here</a>
         </div>
