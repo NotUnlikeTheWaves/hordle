@@ -46,7 +46,7 @@ function renderSolved(props: WordHolderProps, solvedIndex: number): React.ReactE
     return (
         <>
             ✅
-            <table>
+            <table className='done'>
                 <tbody>
                     {renderHistory(history)}
                 </tbody>
