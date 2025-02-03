@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { WordHolder } from './WordHolder'
 import { GameState, LooseObject } from './Types'
-import { WordLength, NumberOfWordles, MaxGuesses } from './Constants'
+import { WordLength, NumberOfWordles, MaxGuesses, LocalStorageHistoryKey, LocalStorageDateKey } from './Constants'
 import { WordList } from './WordList'
 import { getWordList } from './Random'
 
@@ -96,7 +96,15 @@ function handleKeyInput(key: string, gameState: GameState, setGameState: React.D
 
 
 function App() {
-  const [gameState, setGameState] = useState<GameState>({ currentGuess: "", history: [] })
+  const [gameState, setGameState] = useState<GameState>(() => {
+    const storageHistory = localStorage.getItem(LocalStorageHistoryKey)
+    var history = storageHistory ? JSON.parse(storageHistory) : []
+    const storageDate = localStorage.getItem(LocalStorageDateKey)
+    if (!storageDate || (new Date().toISOString().split('T')[0]) != storageDate) {
+      history = []
+    }
+    return { currentGuess: "", history: history }
+  })
   const [format, setFormat] = useState<GameFormat>(GameFormat.Tall);
 
   function handleKeyboardInput(event: KeyboardEvent) {
@@ -107,6 +115,8 @@ function App() {
   console.log(activeWords)
 
   useEffect(() => {
+    localStorage.setItem(LocalStorageHistoryKey, JSON.stringify(gameState.history))
+    localStorage.setItem(LocalStorageDateKey, new Date().toISOString().split('T')[0])
     document.addEventListener('keydown', handleKeyboardInput)
     return () => document.removeEventListener('keydown', handleKeyboardInput)
   }, [gameState.currentGuess, gameState.history]) // magic (x2, because gameState.history is needed here too to work with autcomplete- this effect was never meant for autocomplete!)
